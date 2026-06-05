@@ -16,13 +16,13 @@ document.addEventListener('DOMContentLoaded', function () {
         'Accept': 'application/json'
       }
     })
-    .then(response => response.json())
-    .then(json => {
-      if (json.success) {
-        result.textContent = json.message || 'Mensaje enviado correctamente.';
+    .then(response => response.json().then(json => ({ status: response.status, ok: response.ok, body: json })))
+    .then(({ status, ok, body }) => {
+      if (ok || body.success) {
+        result.textContent = body.message || 'Mensaje enviado correctamente.';
         form.reset();
       } else {
-        result.textContent = json.message || 'Ocurrió un error al enviar.';
+        result.textContent = body.error || body.message || 'Ocurrió un error al enviar.';
       }
     })
     .catch(err => {
